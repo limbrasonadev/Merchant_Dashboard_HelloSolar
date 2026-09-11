@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Hello Solar Merchant Payments — Review commission disbursements, milestone approvals, and tax certificates.">
+    <title>Payments | Hello Solar Merchant</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="assets/images/logo_tab.png">
+    <link rel="apple-touch-icon" href="assets/images/logo_tab.png">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Design System Stylesheet -->
+    <link rel="stylesheet" href="assets/css/dashboard.css">
+    <link rel="stylesheet" href="assets/css/notifications.css">
+</head>
+<body data-page="payments">
+    <div class="app" id="app">
+        <!-- Mobile Drawer Backdrop -->
+        <div class="backdrop" id="backdrop" aria-hidden="true"></div>
+
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar" id="sidebar" aria-label="Merchant navigation"></aside>
+
+        <!-- Main Content Area -->
+        <main class="main" id="main" tabindex="-1">
+            <!-- Glassmorphism Topbar Header -->
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button class="menu-btn" id="menu-btn" type="button" aria-label="Open navigation" aria-controls="sidebar" aria-expanded="false">
+                        <span></span><span></span><span></span>
+                    </button>
+                    <div>
+                        <div class="topbar-title">Payments</div>
+                        <div class="topbar-subtitle">
+                            <span id="topbarMerchantName">SolarTech Manila</span> · <span>Commission Ledger</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="topbar-right">
+                    <!-- Interactive Merchant Profile Badge -->
+                    <div class="profile" id="topbarProfile" title="Click to view and update merchant profile"></div>
+                </div>
+            </header>
+
+            <!-- Page Content -->
+            <div class="content" id="content">
+                <!-- Page Header -->
+                <div class="page-header">
+                    <div>
+                        <h1 style="font-size:24px;font-weight:800;color:var(--navy);letter-spacing:-0.01em;">Payouts & Commissions</h1>
+                        <p style="font-size:13.5px;color:var(--gray-500);margin-top:2px;">Track merchant partner milestone disbursements, 2% BIR withholding tax, and bank deposits.</p>
+                    </div>
+                    <div class="panel-actions">
+                        <button class="btn btn-secondary btn-sm" id="exportCsvBtn" type="button">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="7 10 12 15 17 10"></polyline>
+                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
+                            Download Filtered CSV
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 4 Financial Summary Cards (Strict Merchant Focus) -->
+                <section class="stats-grid" aria-label="Financial Overview">
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <span class="stat-label">Total Recorded Paid</span>
+                            <div class="stat-icon" style="background:var(--green-bg);color:var(--green);">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="stat-value" id="payTotalPaid">—</div>
+                        <div class="stat-desc">
+                            <span class="stat-trend positive">Released</span> Deposited to BDO account
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <span class="stat-label">Pending Payout Amount</span>
+                            <div class="stat-icon" style="background:var(--amber-bg);color:var(--amber);">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="stat-value" id="payPendingReview">—</div>
+                        <div class="stat-desc">
+                            <span class="stat-trend neutral">Awaiting Sign-off</span> 3 Milestones pending
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <span class="stat-label">On-Hold Amount</span>
+                            <div class="stat-icon" style="background:var(--red-bg);color:var(--red);">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <line x1="15" y1="9" x2="9" y2="15"></line>
+                                    <line x1="9" y1="9" x2="15" y2="15"></line>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="stat-value" id="payOnHold">—</div>
+                        <div class="stat-desc">
+                            <span class="stat-trend negative" style="color:var(--red);">Action Needed</span> Delivery audit review
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <span class="stat-label">Next Scheduled Release</span>
+                            <div class="stat-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="stat-value" id="payNextRelease" style="font-size:22px;line-height:1.4;">Sept 15, 2026</div>
+                        <div class="stat-desc">
+                            <span class="stat-trend neutral">Batch #18</span> Bi-monthly PESONet cycle
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Payout Ledger Panel -->
+                <section class="panel-card" aria-labelledby="payoutLedgerHeading">
+                    <div class="panel-header">
+                        <div class="panel-title-group">
+                            <h2 id="payoutLedgerHeading">Merchant Payout Records</h2>
+                            <p>Select any record to view itemized 2% BIR CWT tax breakdown, bank confirmation, and audit clearance.</p>
+                        </div>
+                    </div>
+
+                    <!-- Filter Toolbar -->
+                    <div class="filter-bar">
+                        <div class="search-box">
+                            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                            <input type="search" id="payoutSearch" placeholder="Search reference, project, or milestone..." aria-label="Search payouts">
+                        </div>
+
+                        <div class="filter-controls">
+                            <label for="payoutStatusFilter" class="sr-only" style="display:none;">Filter by Status</label>
+                            <select class="filter-select" id="payoutStatusFilter" aria-label="Filter payouts by status">
+                                <option value="All">All Statuses</option>
+                                <option value="Released">Released</option>
+                                <option value="Pending Review">Pending Review</option>
+                                <option value="On Hold">On Hold</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Payouts Table -->
+                    <div class="table-container">
+                        <table aria-label="Merchant Payouts List">
+                            <thead>
+                                <tr>
+                                    <th>Reference</th>
+                                    <th>Related Project</th>
+                                    <th>Milestone / Purpose</th>
+                                    <th>Net Payout</th>
+                                    <th>Status</th>
+                                    <th>Paid / Expected Date</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="payoutsTableBody">
+                                <!-- Populated dynamically from merchant.json -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Policy & Tax Note -->
+                <details class="panel-card" style="margin-top:20px;cursor:pointer;">
+                    <summary class="info-accordion-summary">
+                        <span>How merchant payouts and 2% BIR withholding tax work</span>
+                        <span style="color:var(--solar-orange);font-size:12px;font-weight:600;">Click to read details</span>
+                    </summary>
+                    <div class="detail-grid" style="font-size:13px;color:var(--gray-600);line-height:1.6;margin-top:14px;padding-top:14px;border-top:1px solid var(--gray-200);">
+                        <div>
+                            <strong style="color:var(--navy);display:block;margin-bottom:2px;">2% Creditable Withholding Tax (BIR CWT)</strong>
+                            Per BIR Revenue Regulations No. 2-98, a 2% withholding tax is deducted from gross sales commissions. BIR Form 2307 certificates are issued quarterly for your income tax crediting.
+                        </div>
+                        <div>
+                            <strong style="color:var(--navy);display:block;margin-bottom:2px;">Milestone Clearance Protocols</strong>
+                            Disbursements require verified photo documentation, equipment waybills, and field supervisor sign-off before queue release.
+                        </div>
+                        <div>
+                            <strong style="color:var(--navy);display:block;margin-bottom:2px;">Disbursement Schedule</strong>
+                            Transfers are deposited on the 1st and 15th via PESONet to your verified corporate bank account.
+                        </div>
+                        <div>
+                            <strong style="color:var(--navy);display:block;margin-bottom:2px;">Billing Support</strong>
+                            Questions regarding calculations? <a href="support.html?topic=Payout%20and%20Billing" style="color:var(--solar-orange-dark);font-weight:700;">Submit a billing inquiry</a> for account manager assistance.
+                        </div>
+                    </div>
+                </details>
+
+                <!-- Local Workspace Preview Data (JSON Loader & Validator) -->
+                <details class="preview-data-accordion" id="previewDataAccordion">
+                    <summary class="preview-data-summary">
+                        <span>Local Workspace Preview Data (JSON Loader & Validator)</span>
+                        <span class="preview-data-badge">file:/// & Offline Resilience</span>
+                    </summary>
+                    <div class="preview-data-content">
+                        <p style="color:var(--gray-600);font-size:12.5px;margin-bottom:10px;">
+                            When opening this portal via <code>file:///</code>, browsers restrict automated <code>fetch()</code> requests. Inspect, upload, or paste your <code>assets/data/merchant.json</code> below to update live records, run schema validation, and test edge cases.
+                        </p>
+                        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px;">
+                            <label class="btn btn-secondary btn-sm" style="cursor:pointer;">
+                                Choose JSON File
+                                <input type="file" id="previewFileInput" accept=".json" style="display:none;">
+                            </label>
+                            <button class="btn btn-secondary btn-sm" id="loadCurrentJsonBtn" type="button">Load Current Data to Textbox</button>
+                            <button class="btn btn-primary btn-sm" id="applyPreviewJsonBtn" type="button">Apply & Validate JSON</button>
+                            <button class="btn btn-secondary btn-sm" id="resetPreviewJsonBtn" type="button" style="color:var(--red);">Reset to Default Dataset</button>
+                        </div>
+                        <textarea class="preview-data-textarea" id="previewJsonTextarea" placeholder="Paste merchant.json content here to validate and apply..."></textarea>
+                        <div class="preview-data-status" id="previewStatus"></div>
+                    </div>
+                </details>
+            </div>
+        </main>
+    </div>
+
+    <!-- Mobile Bottom Navigation Bar (Screens <= 768px) -->
+    <nav class="mobile-bottom-nav" aria-label="Mobile Navigation">
+        <a href="dashboard.html" class="mobile-bottom-nav-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M4 13h6V4H4v9Zm0 7h6v-4H4v4Zm10 0h6v-9h-6v9Zm0-16v4h6V4h-6Z"/></svg>
+            <span>Dashboard</span>
+        </a>
+        <a href="payments.html" class="mobile-bottom-nav-item active" aria-current="page">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3 10h18M7 15h3" stroke-linecap="round"/></svg>
+            <span>Payments</span>
+        </a>
+        <a href="installers.html" class="mobile-bottom-nav-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m14.5 6.5 3-3 3 3-3 3m-2 0-6 6m-2 0-4 4 1 1 4-4m2-10 7 7"/></svg>
+            <span>Installers</span>
+        </a>
+        <a href="support.html" class="mobile-bottom-nav-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13v-2a8 8 0 0 1 16 0v2M6 18H5a2 2 0 0 1-2-2v-1a2 2 0 0 1 2-2h1v5Zm12 0h1a2 2 0 0 0 2-2v-1a2 2 0 0 0-2-2h-1v5Zm0 0c0 2-2 3-5 3"/></svg>
+            <span>Support</span>
+        </a>
+    </nav>
+
+    <!-- Centralized Data Loading & Interactions -->
+    <script src="assets/js/merchant_data.js"></script>
+    <script src="assets/js/dashboard.js"></script>
+    <script src="assets/js/notifications.js"></script>
+</body>
+</html>

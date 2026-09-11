@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Hello Solar Merchant Installers — Monitor technician crew deployment, field certifications, and installation milestones.">
+    <title>Installers | Hello Solar Merchant</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="assets/images/logo_tab.png">
+    <link rel="apple-touch-icon" href="assets/images/logo_tab.png">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Design System Stylesheet -->
+    <link rel="stylesheet" href="assets/css/dashboard.css">
+    <link rel="stylesheet" href="assets/css/notifications.css">
+</head>
+<body data-page="installers">
+    <div class="app" id="app">
+        <!-- Mobile Drawer Backdrop -->
+        <div class="backdrop" id="backdrop" aria-hidden="true"></div>
+
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar" id="sidebar" aria-label="Merchant navigation"></aside>
+
+        <!-- Main Content Area -->
+        <main class="main" id="main" tabindex="-1">
+            <!-- Glassmorphism Topbar Header -->
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button class="menu-btn" id="menu-btn" type="button" aria-label="Open navigation" aria-controls="sidebar" aria-expanded="false">
+                        <span></span><span></span><span></span>
+                    </button>
+                    <div>
+                        <div class="topbar-title">Installers</div>
+                        <div class="topbar-subtitle">
+                            <span id="topbarMerchantName">SolarTech Manila</span> · <span>Field Operations</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="topbar-right">
+                    <!-- Interactive Merchant Profile Badge -->
+                    <div class="profile" id="topbarProfile" title="Click to view and update merchant profile"></div>
+                </div>
+            </header>
+
+            <!-- Page Content -->
+            <div class="content" id="content">
+                <!-- Clean Page Header -->
+                <div class="page-header">
+                    <div>
+                        <h1 style="font-size:24px;font-weight:800;color:var(--navy);letter-spacing:-0.01em;">Installer Crews & Assignments</h1>
+                        <p style="font-size:13.5px;color:var(--gray-500);margin-top:2px;">Overview of assigned field technician teams, engineering leads, and installation stages.</p>
+                    </div>
+                    <div style="font-size:12px;color:var(--gray-500);background:var(--gray-50);padding:6px 12px;border-radius:var(--radius-full);border:1px solid var(--gray-200);">
+                        <span style="color:var(--solar-orange);font-weight:700;">●</span> Operational Roster · Centralized EPC Dispatch
+                    </div>
+                </div>
+
+                <!-- 3 Installer Crew Cards -->
+                <section class="crews-grid" id="installerTeamsGrid" aria-label="Installer Teams">
+                    <!-- Populated dynamically from merchant.json -->
+                </section>
+
+                <!-- Installation Tracker Panel -->
+                <section class="panel-card" aria-labelledby="trackerHeading">
+                    <div class="panel-header">
+                        <div class="panel-title-group">
+                            <h2 id="trackerHeading">Installation Progress Tracker</h2>
+                            <p>Live project statuses, crew allocations, milestones, and technical equipment specifications.</p>
+                        </div>
+                    </div>
+
+                    <!-- Filter Toolbar -->
+                    <div class="filter-bar">
+                        <div class="search-box">
+                            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                            <input type="search" id="installerSearch" placeholder="Search customer, location, or equipment..." aria-label="Search installations">
+                        </div>
+
+                        <div class="filter-controls">
+                            <label for="crewFilter" class="sr-only" style="display:none;">Assigned Crew</label>
+                            <select class="filter-select" id="crewFilter" aria-label="Filter by assigned crew">
+                                <option value="All">All Crews</option>
+                                <option value="CREW-ALPHA">Team Alpha (Engr. Torres)</option>
+                                <option value="CREW-BETA">Team Beta (Engr. David)</option>
+                                <option value="CREW-GAMMA">Team Gamma (Engr. Valenzuela)</option>
+                                <option value="Unassigned">Unassigned Only</option>
+                            </select>
+
+                            <label for="stageFilter" class="sr-only" style="display:none;">Stage Filter</label>
+                            <select class="filter-select" id="stageFilter" aria-label="Filter by stage">
+                                <option value="All">All Stages</option>
+                                <option value="Site Survey">Site Survey</option>
+                                <option value="Engineering Approval">Engineering Approval</option>
+                                <option value="Permitting">Permitting</option>
+                                <option value="Structural Mounting">Structural Mounting</option>
+                                <option value="Inverter & Grid-Tie Testing">Grid-Tie Testing</option>
+                                <option value="Completed">Completed</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Installations Data Table -->
+                    <div class="table-container">
+                        <table aria-label="Active Solar Installations">
+                            <thead>
+                                <tr>
+                                    <th>Customer & ID</th>
+                                    <th>Site Location</th>
+                                    <th>Capacity & Type</th>
+                                    <th>Assigned Crew</th>
+                                    <th>Stage</th>
+                                    <th>Next Action</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="installationsTableBody">
+                                <!-- Populated dynamically from merchant.json -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- EPC Installation Workflow Reference -->
+                <details class="panel-card" style="margin-top:20px;cursor:pointer;">
+                    <summary class="info-accordion-summary">
+                        <span>Standard Philippine Solar Installation Pipeline (EPC Milestones)</span>
+                        <span style="color:var(--solar-orange);font-size:12px;font-weight:600;">Click to view sequence</span>
+                    </summary>
+                    <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--gray-200);">
+                        <p style="font-size:12.5px;color:var(--gray-500);margin-bottom:14px;">Standardized milestone workflow from pre-engineering roof survey to Meralco net-metering energization.</p>
+                        <div class="workflow-steps">
+                            <div class="workflow-step">
+                                <div class="workflow-num">1</div>
+                                <div class="workflow-title">Site Survey</div>
+                                <span style="font-size:11px;color:var(--gray-500);margin-top:2px;">Drone & roof pitch mapping</span>
+                            </div>
+                            <div class="workflow-step">
+                                <div class="workflow-num">2</div>
+                                <div class="workflow-title">Engineering Approval</div>
+                                <span style="font-size:11px;color:var(--gray-500);margin-top:2px;">PEE-stamped SLD design</span>
+                            </div>
+                            <div class="workflow-step">
+                                <div class="workflow-num">3</div>
+                                <div class="workflow-title">Permitting</div>
+                                <span style="font-size:11px;color:var(--gray-500);margin-top:2px;">LGU Electrical & CFEI</span>
+                            </div>
+                            <div class="workflow-step">
+                                <div class="workflow-num">4</div>
+                                <div class="workflow-title">Structural Mounting</div>
+                                <span style="font-size:11px;color:var(--gray-500);margin-top:2px;">Rails, panels & conduits</span>
+                            </div>
+                            <div class="workflow-step">
+                                <div class="workflow-num">5</div>
+                                <div class="workflow-title">Grid-Tie Testing</div>
+                                <span style="font-size:11px;color:var(--gray-500);margin-top:2px;">Isolation & zero-export test</span>
+                            </div>
+                            <div class="workflow-step">
+                                <div class="workflow-num">6</div>
+                                <div class="workflow-title">Completed</div>
+                                <span style="font-size:11px;color:var(--gray-500);margin-top:2px;">Meralco bi-directional meter</span>
+                            </div>
+                        </div>
+                    </div>
+                </details>
+
+                <!-- Local Workspace Preview Data (JSON Loader & Validator) -->
+                <details class="preview-data-accordion" id="previewDataAccordion">
+                    <summary class="preview-data-summary">
+                        <span>Local Workspace Preview Data (JSON Loader & Validator)</span>
+                        <span class="preview-data-badge">file:/// & Offline Resilience</span>
+                    </summary>
+                    <div class="preview-data-content">
+                        <p style="color:var(--gray-600);font-size:12.5px;margin-bottom:10px;">
+                            When opening this portal via <code>file:///</code>, browsers restrict automated <code>fetch()</code> requests. Inspect, upload, or paste your <code>assets/data/merchant.json</code> below to update live records, run schema validation, and test edge cases.
+                        </p>
+                        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px;">
+                            <label class="btn btn-secondary btn-sm" style="cursor:pointer;">
+                                Choose JSON File
+                                <input type="file" id="previewFileInput" accept=".json" style="display:none;">
+                            </label>
+                            <button class="btn btn-secondary btn-sm" id="loadCurrentJsonBtn" type="button">Load Current Data to Textbox</button>
+                            <button class="btn btn-primary btn-sm" id="applyPreviewJsonBtn" type="button">Apply & Validate JSON</button>
+                            <button class="btn btn-secondary btn-sm" id="resetPreviewJsonBtn" type="button" style="color:var(--red);">Reset to Default Dataset</button>
+                        </div>
+                        <textarea class="preview-data-textarea" id="previewJsonTextarea" placeholder="Paste merchant.json content here to validate and apply..."></textarea>
+                        <div class="preview-data-status" id="previewStatus"></div>
+                    </div>
+                </details>
+            </div>
+        </main>
+    </div>
+
+    <!-- Mobile Bottom Navigation Bar (Screens <= 768px) -->
+    <nav class="mobile-bottom-nav" aria-label="Mobile Navigation">
+        <a href="dashboard.html" class="mobile-bottom-nav-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M4 13h6V4H4v9Zm0 7h6v-4H4v4Zm10 0h6v-9h-6v9Zm0-16v4h6V4h-6Z"/></svg>
+            <span>Dashboard</span>
+        </a>
+        <a href="payments.html" class="mobile-bottom-nav-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3 10h18M7 15h3" stroke-linecap="round"/></svg>
+            <span>Payments</span>
+        </a>
+        <a href="installers.html" class="mobile-bottom-nav-item active" aria-current="page">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m14.5 6.5 3-3 3 3-3 3m-2 0-6 6m-2 0-4 4 1 1 4-4m2-10 7 7"/></svg>
+            <span>Installers</span>
+        </a>
+        <a href="support.html" class="mobile-bottom-nav-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13v-2a8 8 0 0 1 16 0v2M6 18H5a2 2 0 0 1-2-2v-1a2 2 0 0 1 2-2h1v5Zm12 0h1a2 2 0 0 0 2-2v-1a2 2 0 0 0-2-2h-1v5Zm0 0c0 2-2 3-5 3"/></svg>
+            <span>Support</span>
+        </a>
+    </nav>
+
+    <!-- Centralized Data Loading & Interactions -->
+    <script src="assets/js/merchant_data.js"></script>
+    <script src="assets/js/dashboard.js"></script>
+    <script src="assets/js/notifications.js"></script>
+</body>
+</html>
