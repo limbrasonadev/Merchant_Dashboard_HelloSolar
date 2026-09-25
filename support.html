@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Hello Solar Merchant Support — Submit technical tickets, verify billing queries, and browse partner documentation.">
+    <meta name="description"
+        content="Hello Solar Merchant Support — Submit technical tickets, verify billing queries, and browse partner documentation.">
     <title>Support | Hello Solar Merchant</title>
 
     <!-- Favicon -->
@@ -13,12 +15,14 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
 
     <!-- Design System Stylesheet -->
     <link rel="stylesheet" href="assets/css/dashboard.css">
     <link rel="stylesheet" href="assets/css/notifications.css">
 </head>
+
 <body data-page="support">
     <div class="app" id="app">
         <!-- Mobile Drawer Backdrop -->
@@ -32,224 +36,115 @@
             <!-- Glassmorphism Topbar Header -->
             <header class="topbar">
                 <div class="topbar-left">
-                    <button class="menu-btn" id="menu-btn" type="button" aria-label="Open navigation" aria-controls="sidebar" aria-expanded="false">
-                        <span></span><span></span><span></span>
-                    </button>
-                    <div>
-                        <div class="topbar-title">Support</div>
-                        <div class="topbar-subtitle">
-                            <span id="topbarMerchantName">SolarTech Manila</span> · <span>Partner Helpdesk</span>
-                        </div>
+                    <a href="dashboard.html" class="topbar-logo" aria-label="Hello Solar">
+                        <img src="assets/images/hello_solar.png" alt="Hello Solar" class="topbar-logo-img">
+                    </a>
+                    <div class="topbar-subtitle">
+                        <span id="topbarMerchantName">SolarTech Manila</span> · <span>Partner Helpdesk</span>
                     </div>
                 </div>
 
                 <div class="topbar-right">
-                    <!-- Interactive Merchant Profile Badge -->
-                    <div class="profile" id="topbarProfile" title="Click to view and update merchant profile"></div>
+                    <!-- Interactive Merchant Profile Avatar -->
+                    <div class="profile" id="topbarProfile" role="button" tabindex="0" aria-haspopup="dialog"
+                        aria-label="Merchant Profile & Settings" title="Click to view and update merchant profile">
+                    </div>
                 </div>
             </header>
 
             <!-- Page Content -->
             <div class="content" id="content">
-                <!-- Clean Page Header -->
-                <div class="page-header">
-                    <div>
-                        <h1 style="font-size:24px;font-weight:800;color:var(--navy);letter-spacing:-0.01em;">Support & FAQs</h1>
-                        <p style="font-size:13.5px;color:var(--gray-500);margin-top:2px;">Prepare official inquiries for your account manager or browse partner operational documentation.</p>
-                    </div>
+                <!-- Clean Simple Page Header -->
+                <div class="support-page-header">
+                    <h1 class="support-page-title">Support</h1>
+                    <p class="support-page-subtitle">Need help with a customer, payment, installer, or job?</p>
                 </div>
 
-                <!-- 4 Quick-Action Help Category Cards -->
-                <section class="support-category-grid" aria-label="Support Categories">
-                    <div class="support-category-card active" data-category="Payout and Billing">
-                        <div class="support-category-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="3" y="5" width="18" height="14" rx="3"></rect>
-                                <line x1="3" y1="10" x2="21" y2="10"></line>
-                            </svg>
-                        </div>
-                        <h3>Payout & Billing</h3>
-                        <p>Milestone releases, 2% BIR withholding, and bank disbursement schedules.</p>
-                    </div>
-
-                    <div class="support-category-card" data-category="Technical Requirements">
-                        <div class="support-category-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path>
-                            </svg>
-                        </div>
-                        <h3>Technical & Permitting</h3>
-                        <p>SLD design stamps, roof mounting feasibility, and LGU electrical permits.</p>
-                    </div>
-
-                    <div class="support-category-card" data-category="Net-Metering">
-                        <div class="support-category-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path>
-                            </svg>
-                        </div>
-                        <h3>Net-Metering</h3>
-                        <p>Meralco distribution impact study (DIS) and bi-directional meter tests.</p>
-                    </div>
-
-                    <div class="support-category-card" data-category="Warranty and RMA">
-                        <div class="support-category-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                            </svg>
-                        </div>
-                        <h3>Warranty & RMA</h3>
-                        <p>Replacements for inverters, PV modules, and battery storage units.</p>
-                    </div>
-                </section>
-
-                <!-- Two-Column Layout: Left (Draft Builder) vs Right (FAQ Center) -->
-                <div class="dashboard-split-grid support-split-grid">
-                    <!-- Left Column: Support Ticket Draft Builder -->
-                    <section class="panel-card" aria-labelledby="draftBuilderHeading">
-                        <div class="panel-header">
-                            <div class="panel-title-group">
-                                <h2 id="draftBuilderHeading">Prepare Support Request</h2>
-                                <p>Save an offline draft or download an official request text file to submit to your account manager.</p>
-                            </div>
+                <!-- Main Support Card Container (Single Focused Column) -->
+                <div class="support-card-container">
+                    <section class="panel-card support-card" aria-labelledby="supportHeading">
+                        <div class="support-card-header">
+                            <h2 id="supportHeading" class="support-card-title">Need help?</h2>
+                            <p class="support-card-desc">Tell us what you need help with and we'll help you figure out the next step.</p>
                         </div>
 
-                        <!-- Honest Unsent Notice -->
-                        <div style="background:var(--cream-soft);border:1px solid rgba(255, 138, 0, 0.25);border-radius:var(--radius-xs);padding:10px 14px;margin-bottom:16px;font-size:12.5px;color:var(--gray-700);display:flex;align-items:center;gap:8px;">
-                            <span style="color:var(--solar-orange);font-weight:800;">ℹ</span>
-                            <span><strong>Unsent Draft:</strong> Text is preserved on this device. Download the request file to submit to David Ramos (<a href="mailto:support@hellosolar.ph" style="color:var(--navy);font-weight:700;">support@hellosolar.ph</a>).</span>
+                        <!-- Safe Prefill Context Notice (Hidden unless incoming reference link) -->
+                        <div id="incomingContextNotice" style="display:none;">
+                            <span id="incomingContextText"></span>
+                            <button id="applyContextBtn" type="button" class="btn btn-secondary btn-sm" style="margin-left:8px;">Apply Reference</button>
                         </div>
 
-                        <!-- Safe Prefill Context Notice (Shows only if link prefilled an active draft) -->
-                        <div id="incomingContextNotice" style="display:none;background:var(--blue-bg);border:1px solid var(--blue-border);border-radius:var(--radius-xs);padding:10px 14px;margin-bottom:16px;font-size:12.5px;color:var(--blue);">
-                            <span id="incomingContextText">Incoming reference available.</span>
-                            <button id="applyContextBtn" type="button" class="btn btn-secondary btn-sm" style="margin-left:8px;padding:2px 8px;font-size:11px;">Apply Reference</button>
-                        </div>
+                        <form id="supportTicketForm" novalidate>
+                            <!-- Hidden Fields to maintain 100% compatibility with dashboard.js logic -->
+                            <input type="hidden" id="ticketProjectRef" name="projectRef" value="">
+                            <input type="hidden" id="ticketPriority" name="priority" value="Normal">
+                            <input type="hidden" id="ticketSubject" name="subject" value="Support Request">
 
-                        <form id="supportTicketForm">
+                            <!-- Field 1: Topic -->
                             <div class="form-group">
-                                <label class="form-label" for="ticketTopic">Topic / Category</label>
+                                <label class="form-label" for="ticketTopic">Topic</label>
                                 <select class="form-select" id="ticketTopic" name="topic" required>
-                                    <option value="Payout and Billing">Payout & Billing Statement</option>
-                                    <option value="Technical Requirements">Technical & Structural Engineering</option>
-                                    <option value="Permitting">Permitting & CFEI Inspection</option>
-                                    <option value="Net-Metering">Meralco Net-Metering Activation</option>
-                                    <option value="Warranty and RMA">Warranty Claim / Equipment RMA</option>
-                                    <option value="Installer Assignment">Installer Crew Scheduling</option>
-                                    <option value="General Partner Account">General Partner Account Inquiry</option>
+                                    <option value="" disabled selected>Select a topic</option>
+                                    <option value="Customer">Customer</option>
+                                    <option value="Payment">Payment</option>
+                                    <option value="Installer">Installer</option>
+                                    <option value="Job">Job</option>
+                                    <option value="Other">Other</option>
                                 </select>
                             </div>
 
-                            <div class="detail-grid">
-                                <div class="form-group" style="margin-bottom:0;">
-                                    <label class="form-label" for="ticketProjectRef">Project or Payout Reference</label>
-                                    <input class="form-input" id="ticketProjectRef" name="projectRef" type="text" placeholder="e.g. PRJ-QC-101 or PAY-2026-083">
-                                </div>
-
-                                <div class="form-group" style="margin-bottom:0;">
-                                    <label class="form-label" for="ticketPriority">Priority</label>
-                                    <select class="form-select" id="ticketPriority" name="priority">
-                                        <option value="Normal">Normal</option>
-                                        <option value="Urgent">Urgent</option>
-                                        <option value="Critical Field Escalation">Critical Field Escalation</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="form-group" style="margin-top:14px;">
-                                <label class="form-label" for="ticketSubject">Subject</label>
-                                <input class="form-input" id="ticketSubject" name="subject" type="text" placeholder="e.g. Delivery receipt matching for Makati Commercial site" required>
-                            </div>
-
+                            <!-- Field 2: What's happening? -->
                             <div class="form-group">
-                                <label class="form-label" for="ticketDescription">Problem Description & Details</label>
-                                <textarea class="form-textarea" id="ticketDescription" name="description" placeholder="Describe the inquiry or issue with relevant dates or equipment serials. Do not include passwords or full bank credentials." required></textarea>
+                                <label class="form-label" for="ticketDescription">What's happening?</label>
+                                <textarea class="form-textarea" id="ticketDescription" name="description"
+                                    placeholder="Tell us what happened..." rows="5" required></textarea>
                             </div>
 
-                            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;align-items:center;">
-                                <button class="btn btn-primary btn-sm" id="downloadDraftBtn" type="button">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                        <polyline points="7 10 12 15 17 10"></polyline>
-                                        <line x1="12" y1="15" x2="12" y2="3"></line>
-                                    </svg>
-                                    Download Request (.txt)
+                            <!-- Form Actions -->
+                            <div class="support-form-actions">
+                                <button class="btn btn-primary support-submit-btn" id="downloadDraftBtn" type="button">
+                                    Send Request
                                 </button>
-                                <button class="btn btn-secondary btn-sm" id="saveDraftBtn" type="button">
-                                    Save Draft on This Device
-                                </button>
-                                <button class="btn btn-secondary btn-sm" id="clearDraftBtn" type="button" style="color:var(--gray-500);">
-                                    Clear
-                                </button>
-                                <span id="draftStatusMessage" style="font-size:12px;color:var(--green);font-weight:600;margin-left:auto;"></span>
+                                <!-- Preserved hooks for auto-save status and legacy handlers -->
+                                <span id="draftStatusMessage" class="draft-status-msg" style="display:none;"></span>
+                                <button id="saveDraftBtn" type="button" style="display:none;" aria-hidden="true"></button>
+                                <button id="clearDraftBtn" type="button" style="display:none;" aria-hidden="true"></button>
                             </div>
                         </form>
-                    </section>
 
-                    <!-- Right Column: FAQ Center -->
-                    <section class="panel-card" aria-labelledby="faqHeading">
-                        <div class="panel-header">
-                            <div class="panel-title-group">
-                                <h2 id="faqHeading">Frequently Asked Questions</h2>
-                                <p>Answers to common merchant partner operational procedures.</p>
-                            </div>
+                        <!-- Secondary Small Action: View common help → -->
+                        <div class="support-common-help-trigger">
+                            <button type="button" class="btn-common-help" id="toggleCommonHelpBtn" aria-expanded="false" aria-controls="commonHelpSection">
+                                <span id="commonHelpToggleText">View common help →</span>
+                            </button>
                         </div>
 
-                        <!-- FAQ Search & Filter -->
-                        <div class="filter-bar" style="margin-bottom:14px;">
-                            <div class="search-box">
-                                <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <circle cx="11" cy="11" r="8"></circle>
-                                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                                </svg>
-                                <input type="search" id="faqSearch" placeholder="Search answers (e.g. payout, CFEI, warranty)..." aria-label="Search FAQs">
+                        <!-- Collapsible Compact FAQ Section (Collapsed by default) -->
+                        <div class="common-help-section" id="commonHelpSection" style="display:none;">
+                            <div class="common-help-divider"></div>
+                            <h3 class="common-help-title">Frequently Asked Questions</h3>
+
+                            <!-- Hidden search/filter elements to support dashboard.js renderFaqs() without runtime errors -->
+                            <input type="hidden" id="faqSearch" value="">
+                            <input type="hidden" id="faqCategoryFilter" value="All">
+
+                            <div class="faq-list" id="faqList" aria-label="Frequently Asked Questions">
+                                <!-- Populated dynamically by dashboard.js -->
                             </div>
 
-                            <div class="filter-controls">
-                                <label for="faqCategoryFilter" class="sr-only" style="display:none;">FAQ Category</label>
-                                <select class="filter-select" id="faqCategoryFilter" aria-label="Filter FAQs by category">
-                                    <option value="All">All Categories</option>
-                                    <option value="Payout and Billing">Payout & Billing</option>
-                                    <option value="Technical Requirements">Technical</option>
-                                    <option value="Permitting">Permitting</option>
-                                    <option value="Net-Metering">Net-Metering</option>
-                                    <option value="Warranty and RMA">Warranty</option>
-                                    <option value="Installer Assignment">Installers</option>
-                                    <option value="Merchant Commissions">Commissions</option>
-                                </select>
+                            <!-- See More Toggle for FAQs -->
+                            <div class="panel-card-footer" id="faqSeeMoreWrap" style="display:none;margin-top:14px;">
+                                <button class="btn-toggle-expand" id="faqToggleBtn" type="button" aria-expanded="false">
+                                    <span id="faqToggleText">See More</span>
+                                    <svg class="toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg>
+                                </button>
                             </div>
-                        </div>
-
-                        <!-- FAQ Accordion List -->
-                        <div class="faq-list" id="faqList" aria-label="FAQ Accordion">
-                            <!-- Populated dynamically from merchant.json -->
                         </div>
                     </section>
                 </div>
-
-                <!-- Local Workspace Preview Data (JSON Loader & Validator) -->
-                <details class="preview-data-accordion" id="previewDataAccordion">
-                    <summary class="preview-data-summary">
-                        <span>Local Workspace Preview Data (JSON Loader & Validator)</span>
-                        <span class="preview-data-badge">file:/// & Offline Resilience</span>
-                    </summary>
-                    <div class="preview-data-content">
-                        <p style="color:var(--gray-600);font-size:12.5px;margin-bottom:10px;">
-                            When opening this portal via <code>file:///</code>, browsers restrict automated <code>fetch()</code> requests. Inspect, upload, or paste your <code>assets/data/merchant.json</code> below to update live records, run schema validation, and test edge cases.
-                        </p>
-                        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px;">
-                            <label class="btn btn-secondary btn-sm" style="cursor:pointer;">
-                                Choose JSON File
-                                <input type="file" id="previewFileInput" accept=".json" style="display:none;">
-                            </label>
-                            <button class="btn btn-secondary btn-sm" id="loadCurrentJsonBtn" type="button">Load Current Data to Textbox</button>
-                            <button class="btn btn-primary btn-sm" id="applyPreviewJsonBtn" type="button">Apply & Validate JSON</button>
-                            <button class="btn btn-secondary btn-sm" id="resetPreviewJsonBtn" type="button" style="color:var(--red);">Reset to Default Dataset</button>
-                        </div>
-                        <textarea class="preview-data-textarea" id="previewJsonTextarea" placeholder="Paste merchant.json content here to validate and apply..."></textarea>
-                        <div class="preview-data-status" id="previewStatus"></div>
-                    </div>
-                </details>
             </div>
         </main>
     </div>
@@ -257,19 +152,31 @@
     <!-- Mobile Bottom Navigation Bar (Screens <= 768px) -->
     <nav class="mobile-bottom-nav" aria-label="Mobile Navigation">
         <a href="dashboard.html" class="mobile-bottom-nav-item">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M4 13h6V4H4v9Zm0 7h6v-4H4v4Zm10 0h6v-9h-6v9Zm0-16v4h6V4h-6Z"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round">
+                <path d="M4 13h6V4H4v9Zm0 7h6v-4H4v4Zm10 0h6v-9h-6v9Zm0-16v4h6V4h-6Z" />
+            </svg>
             <span>Dashboard</span>
         </a>
         <a href="payments.html" class="mobile-bottom-nav-item">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3 10h18M7 15h3" stroke-linecap="round"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <rect x="3" y="5" width="18" height="14" rx="3" />
+                <path d="M3 10h18M7 15h3" stroke-linecap="round" />
+            </svg>
             <span>Payments</span>
         </a>
         <a href="installers.html" class="mobile-bottom-nav-item">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m14.5 6.5 3-3 3 3-3 3m-2 0-6 6m-2 0-4 4 1 1 4-4m2-10 7 7"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                stroke-linejoin="round">
+                <path d="m14.5 6.5 3-3 3 3-3 3m-2 0-6 6m-2 0-4 4 1 1 4-4m2-10 7 7" />
+            </svg>
             <span>Installers</span>
         </a>
         <a href="support.html" class="mobile-bottom-nav-item active" aria-current="page">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13v-2a8 8 0 0 1 16 0v2M6 18H5a2 2 0 0 1-2-2v-1a2 2 0 0 1 2-2h1v5Zm12 0h1a2 2 0 0 0 2-2v-1a2 2 0 0 0-2-2h-1v5Zm0 0c0 2-2 3-5 3"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                stroke-linejoin="round">
+                <path
+                    d="M4 13v-2a8 8 0 0 1 16 0v2M6 18H5a2 2 0 0 1-2-2v-1a2 2 0 0 1 2-2h1v5Zm12 0h1a2 2 0 0 0 2-2v-1a2 2 0 0 0-2-2h-1v5Zm0 0c0 2-2 3-5 3" />
+            </svg>
             <span>Support</span>
         </a>
     </nav>
@@ -278,5 +185,25 @@
     <script src="assets/js/merchant_data.js"></script>
     <script src="assets/js/dashboard.js"></script>
     <script src="assets/js/notifications.js"></script>
+
+    <!-- Support Page Common Help Toggle Interaction -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const toggleBtn = document.getElementById("toggleCommonHelpBtn");
+            const helpSection = document.getElementById("commonHelpSection");
+            const toggleText = document.getElementById("commonHelpToggleText");
+            if (toggleBtn && helpSection) {
+                toggleBtn.addEventListener("click", () => {
+                    const isHidden = helpSection.style.display === "none" || helpSection.style.display === "";
+                    helpSection.style.display = isHidden ? "block" : "none";
+                    toggleBtn.setAttribute("aria-expanded", isHidden ? "true" : "false");
+                    if (toggleText) {
+                        toggleText.textContent = isHidden ? "Hide common help ↑" : "View common help →";
+                    }
+                });
+            }
+        });
+    </script>
 </body>
+
 </html>

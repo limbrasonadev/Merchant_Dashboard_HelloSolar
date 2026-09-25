@@ -214,8 +214,48 @@
     }
 
     // --------------------------------------------------------------------------
-    // 5. AUTHORITATIVE DATA LOADER & CACHE
+    // 5. MODULAR DATA ENDPOINTS & AUTHORITATIVE DATA LOADER (Backend-Ready)
     // --------------------------------------------------------------------------
+    const ENDPOINTS = {
+        projects: 'assets/data/projects.json',
+        installers: 'assets/data/installers.json',
+        payouts: 'assets/data/payouts.json',
+        payments: 'assets/data/payouts.json',
+        faqs: 'assets/data/faqs.json',
+        merchant: 'assets/data/merchant_data.json',
+        notifications: 'assets/data/notifications_seed.json',
+        composite: 'assets/data/merchant.json'
+    };
+
+    async function fetchJsonResource(filename) {
+        if (filename === 'payments.json') filename = 'payouts.json';
+
+        const candidateUrls = [
+            `assets/data/${filename}`,
+            `data/${filename}`,
+            `./assets/data/${filename}`,
+            `../assets/data/${filename}`
+        ];
+
+        for (const url of candidateUrls) {
+            try {
+                const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+                const timeoutId = controller ? setTimeout(() => controller.abort(), 4000) : null;
+                const res = await fetch(url, {
+                    cache: 'no-cache',
+                    signal: controller ? controller.signal : undefined
+                });
+                if (timeoutId) clearTimeout(timeoutId);
+                if (res.ok) {
+                    return await res.json();
+                }
+            } catch (e) {
+                // Try next candidate URL
+            }
+        }
+        throw new Error(`Failed to load JSON resource: ${filename}`);
+    }
+
     async function loadAllData(forceReload = false) {
         if (!forceReload && cachedDataset) {
             return cachedDataset;
@@ -237,35 +277,80 @@
             console.warn('[MerchantData] Error reading custom dataset from localStorage:', e);
         }
 
-        // Fetch authoritative assets/data/merchant.json
+        // Primary source: Load existing modular JSON files concurrently
         try {
-            const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
-            const timeoutId = controller ? setTimeout(() => controller.abort(), 4000) : null;
+            const [projectsData, installersData, payoutsData, faqsData, merchantInfoData] = await Promise.all([
+                fetchJsonResource('projects.json'),
+                fetchJsonResource('installers.json'),
+                fetchJsonResource('payouts.json'),
+                fetchJsonResource('faqs.json'),
+                fetchJsonResource('merchant_data.json')
+            ]);
 
-            const response = await fetch('assets/data/merchant.json', {
-                cache: 'no-cache',
-                signal: controller ? controller.signal : undefined
-            });
-
-            if (timeoutId) clearTimeout(timeoutId);
-
-            if (response.ok) {
-                const data = await response.json();
-                const validation = validateDataset(data);
-                if (validation.valid) {
-                    cachedDataset = data;
-                    applyUserPreferences(cachedDataset.merchant);
-                    // Cache in localStorage for offline / file:/// protocol resilience
-                    try {
-                        localStorage.setItem('hello_solar_merchant_cached_default', JSON.stringify(data));
-                    } catch (e) {}
-                    return cachedDataset;
-                } else {
-                    console.error('[MerchantData] Schema validation failed for merchant.json:', validation.errors);
+            const merchantObj = {
+                companyName: merchantInfoData.companyName || "SolarTech Manila",
+                merchantId: merchantInfoData.merchantId || "MCH-77412",
+                accountType: merchantInfoData.accountType || "Merchant Partner",
+                verificationStatus: merchantInfoData.verificationStatus || "Accreditation on File",
+                contactPerson: merchantInfoData.contactPerson || "Marco Santos",
+                email: merchantInfoData.email || "merchant@hellosolar.ph",
+                phone: merchantInfoData.phone || "+63 917 888 2026",
+                partnerTier: merchantInfoData.partnerTier || "Gold Certified Partner",
+                commissionRate: merchantInfoData.commissionRate || "5.2% Tier A Commission",
+                accountManager: merchantInfoData.accountManager || "David Ramos",
+                payoutPreferences: merchantInfoData.payoutPreferences || {
+                    preferredBank: "BDO Unibank",
+                    accountName: "SolarTech Manila Corp.",
+                    accountNumberMasked: "**** **** 9012",
+                    payoutSchedule: "Bi-Monthly (1st & 15th)"
                 }
+            };
+
+            const combined = {
+                merchant: merchantObj,
+                projects: Array.isArray(projectsData) ? projectsData : [],
+                payouts: Array.isArray(payoutsData) ? payoutsData : [],
+                crews: Array.isArray(installersData) ? installersData : [],
+                milestones: Array.isArray(merchantInfoData.upcomingMilestones) ? merchantInfoData.upcomingMilestones : [],
+                support: {
+                    categories: [
+                        { id: "CAT-PAY", name: "Payout and Billing", description: "Commission cycles, tax deductions, and bank preferences." },
+                        { id: "CAT-TECH", name: "Technical Requirements", description: "System sizing, SLD, roof engineering, and equipment specs." },
+                        { id: "CAT-PERMIT", name: "Permitting", description: "LGU electrical permits, OBO clearances, and CFEI processing." },
+                        { id: "CAT-NET", name: "Net-Metering", description: "Distribution impact studies and Meralco meter activation." },
+                        { id: "CAT-WARR", name: "Warranty and RMA", description: "Manufacturer warranties and hardware replacement SLAs." },
+                        { id: "CAT-CREW", name: "Installer Assignment", description: "Crew routing, site scheduling, and lead engineer allocation." },
+                        { id: "CAT-COMM", name: "Merchant Commissions", description: "Partner tier progressions, rate reviews, and earnings tracking." }
+                    ],
+                    faqs: Array.isArray(faqsData) ? faqsData : []
+                },
+                activity: Array.isArray(merchantInfoData.operationalActivityLogs) ? merchantInfoData.operationalActivityLogs : []
+            };
+
+            const validation = validateDataset(combined);
+            if (validation.valid) {
+                cachedDataset = combined;
+                applyUserPreferences(cachedDataset.merchant);
+                try {
+                    localStorage.setItem('hello_solar_merchant_cached_default', JSON.stringify(combined));
+                } catch (e) {}
+                return cachedDataset;
+            } else {
+                console.warn('[MerchantData] Combined modular dataset validation warnings:', validation.errors);
             }
         } catch (err) {
-            console.warn('[MerchantData] Automated fetch failed (likely file:/// protocol or offline). Using offline cache.');
+            console.warn('[MerchantData] Modular fetch failed, attempting composite merchant.json fallback:', err);
+            try {
+                const fallbackRes = await fetchJsonResource('merchant.json');
+                const validation = validateDataset(fallbackRes);
+                if (validation.valid) {
+                    cachedDataset = fallbackRes;
+                    applyUserPreferences(cachedDataset.merchant);
+                    return cachedDataset;
+                }
+            } catch (e2) {
+                console.warn('[MerchantData] Composite fetch failed. Using offline cache.');
+            }
         }
 
         // Fallback: Check cached default in localStorage
@@ -474,9 +559,17 @@
     }
 
     // --------------------------------------------------------------------------
-    // 9. PUBLIC API EXPORT
+    // 9. PUBLIC API EXPORT (Modular & Backend-Ready)
     // --------------------------------------------------------------------------
     return {
+        ENDPOINTS,
+        fetchJsonResource,
+        fetchProjects: () => fetchJsonResource('projects.json'),
+        fetchInstallers: () => fetchJsonResource('installers.json'),
+        fetchPayouts: () => fetchJsonResource('payouts.json'),
+        fetchPayments: () => fetchJsonResource('payouts.json'),
+        fetchFaqs: () => fetchJsonResource('faqs.json'),
+        fetchMerchantData: () => fetchJsonResource('merchant_data.json'),
         loadAllData,
         loadMerchantData,
         loadProjects,
