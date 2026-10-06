@@ -398,6 +398,9 @@
         </p>
     </main>
 
+    <script src="../shared/hello-solar-config.js"></script>
+    <script src="../hello_solar_super_admin/data.js"></script>
+    <script src="../shared/hello-solar-shared.js"></script>
     <script>
         const signupForm = document.getElementById("signupForm");
         const fullNameInput = document.getElementById("fullName");
@@ -449,6 +452,8 @@
         passwordToggle.addEventListener("click", () => toggleVisibility(passwordInput, eyeIcon));
         confirmPasswordToggle.addEventListener("click", () => toggleVisibility(confirmPasswordInput, confirmEyeIcon));
 
+        const SIGNUP_LABEL = signupBtnText.textContent;
+
         signupForm.addEventListener("submit", (e) => {
             e.preventDefault();
             hideError();
@@ -481,17 +486,26 @@
             signupBtnText.textContent = "Creating Account...";
 
             setTimeout(() => {
-                localStorage.setItem("hello_solar_merchant_logged_in", "true");
-                sessionStorage.setItem("hello_solar_merchant_logged_in", "true");
-                localStorage.setItem("hello_solar_merchant_user", fullName);
-                localStorage.setItem("hello_solar_merchant_company", companyName);
+                // Registers a Pending Review merchant in the shared registry (no session).
+                // Super Admin activates the account before it can log in.
+                const result = window.HSShared
+                    ? window.HSShared.registerPendingAccount("merchant", { name: companyName, contact: fullName, phone: phone, email: email, password: password })
+                    : { ok: false, error: "Account registration is unavailable right now. Please try again later." };
+                if (!result.ok) {
+                    signupBtn.disabled = false;
+                    signupBtnText.textContent = SIGNUP_LABEL;
+                    showError(result.error);
+                    emailInput.focus();
+                    return;
+                }
 
-                signupBtnText.textContent = "Account Created ✓";
+                signupBtnText.textContent = "Account Submitted ✓";
                 signupBtn.style.background = "#059669";
+                showError("Account " + result.account.id + " is pending Hello Solar review. You can log in once it is activated.");
 
                 setTimeout(() => {
-                    window.location.replace("dashboard.html");
-                }, 350);
+                    window.location.replace("login.html");
+                }, 2200);
             }, 600);
         });
     </script>

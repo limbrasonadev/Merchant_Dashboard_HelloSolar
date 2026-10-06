@@ -661,3 +661,15 @@
         max-width: 100%;
     }
 }
+/* Final polish: keep the closed mobile sheet fully out of layout/focus order */
+@media (max-width: 768px) {
+    .notification-panel:not(.open) {
+        visibility: hidden;
+        transition: transform 0.3s ease, visibility 0s linear 0.3s !important;
+    }
+
+    .notification-panel.open {
+        visibility: visible;
+        transition: transform 0.3s ease, visibility 0s !important;
+    }
+}

@@ -7,6 +7,12 @@
  * ==========================================================================
  */
 
+// Merchant-only page guard: a valid merchant session for an Active shared MER-### account is required.
+if (!window.HSShared || !window.HSShared.session.isValid("merchant")) {
+    if (window.HSShared) window.HSShared.session.clear("merchant");
+    window.location.replace("login.html");
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
     'use strict';
 
@@ -80,8 +86,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         const logoutBtn = document.getElementById("logoutBtn");
         if (logoutBtn) {
             logoutBtn.addEventListener("click", () => {
-                localStorage.removeItem("hello_solar_merchant_logged_in");
-                sessionStorage.removeItem("hello_solar_merchant_logged_in");
+                if (window.HSShared) window.HSShared.session.clear("merchant");
+                try { sessionStorage.removeItem("hello_solar_merchant_logged_in"); } catch (e) { /* legacy flag */ }
             });
         }
     }
@@ -326,8 +332,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         const modalLogoutBtn = modal.querySelector("#modalLogoutBtn");
         if (modalLogoutBtn) {
             modalLogoutBtn.onclick = () => {
-                localStorage.removeItem("hello_solar_merchant_logged_in");
-                sessionStorage.removeItem("hello_solar_merchant_logged_in");
+                if (window.HSShared) window.HSShared.session.clear("merchant");
+                try { sessionStorage.removeItem("hello_solar_merchant_logged_in"); } catch (e) { /* legacy flag */ }
                 window.location.href = "login.html";
             };
         }
@@ -1297,6 +1303,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             if (exportBtn) exportBtn.disabled = false;
 
+            // Same See More behaviour as the other merchant tables
+            const isFiltered = Boolean(query) || status !== "All";
+            const displayList = (payoutsExpanded || isFiltered) ? currentFilteredPayouts : currentFilteredPayouts.slice(0, DEFAULT_PAYOUT_LIMIT);
+
             function formatConcisePayoutDate(dateStr, status) {
                 if (!dateStr || status === "On Hold" || dateStr.toLowerCase().includes("audit") || dateStr.toLowerCase().includes("hold")) {
                     return "—";
@@ -1668,7 +1678,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     "HELLO SOLAR MERCHANT — OFFICIAL SUPPORT REQUEST",
                     "===========================================================",
                     `Date Generated:     ${new Date().toLocaleString("en-PH")}`,
-                    `Merchant Company:   ${merchantData.companyName || "SolarTech Manila"} (ID: ${merchantData.merchantId || "MCH-77412"})`,
+                    `Merchant Company:   ${merchantData.companyName || "SolarTech Manila"} (ID: ${merchantData.merchantId || "—"})`,
                     `Contact Person:     ${merchantData.contactPerson} (${merchantData.phone})`,
                     "-----------------------------------------------------------",
                     `Category / Topic:   ${form.elements.topic.value}`,

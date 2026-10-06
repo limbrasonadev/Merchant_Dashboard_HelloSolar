@@ -120,6 +120,9 @@
                                 Status</label>
                             <select class="filter-select" id="payoutStatusFilter" aria-label="Filter payouts by status">
                                 <option value="All">All Statuses</option>
+                                <option value="Released">Released</option>
+                                <option value="Pending Review">Pending</option>
+                                <option value="On Hold">On Hold</option>
                             </select>
                         </div>
                     </div>
@@ -190,6 +193,9 @@
     </nav>
 
     <!-- Centralized Data Loading & Interactions -->
+    <script src="../shared/hello-solar-config.js"></script>
+    <script src="../hello_solar_super_admin/data.js"></script>
+    <script src="../shared/hello-solar-shared.js"></script>
     <script src="assets/js/merchant_data.js"></script>
     <script src="assets/js/dashboard.js"></script>
     <script src="assets/js/notifications.js"></script>

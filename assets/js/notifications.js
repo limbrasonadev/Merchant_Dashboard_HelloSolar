@@ -10,16 +10,19 @@
     const CHANNEL_NAME = "hello_solar_notifications_bus";
 
     // Detect active portal role from directory path or window context
-    function detectPortalRole() {
-        const path = window.location.pathname.toLowerCase();
-        if (path.includes("hello_solar_customer")) return "customer";
-        if (path.includes("hello_solar_installer")) return "installer";
-        if (path.includes("hello_solar_merchant")) return "merchant";
-        if (path.includes("hello_solar_financer")) return "financer";
-        return "financer"; // Default in Financer directory
-    }
+    const CURRENT_ROLE = "merchant"; // explicit: never inferred from the URL path
 
-    const CURRENT_ROLE = detectPortalRole();
+    // Notifications are addressed by role and, when known, by account ID (shared session of this portal).
+    // Portal demo notifications belong to the portal's demo account in the shared registry.
+    const DEMO_RECIPIENT = { customer: "CUS-1010", financer: "FIN-005", installer: "INS-006", merchant: "MER-026" };
+    function currentAccountId() {
+        const session = window.HSShared ? window.HSShared.session.get(CURRENT_ROLE) : null;
+        return session ? session.accountId : null;
+    }
+    function isVisible(n, role) {
+        if (!(n.recipientRole === role || n.recipientRole === "*")) return false;
+        return !n.recipientId || n.recipientId === "*" || n.recipientId === currentAccountId();
+    }
 
     // Default seed dataset
     const DEFAULT_SEED = [
@@ -98,12 +101,32 @@
     // --------------------------------------------------------------------------
     // STORAGE & PERSISTENCE
     // --------------------------------------------------------------------------
+    DEFAULT_SEED.forEach(n => {
+        if (!n.recipientId || n.recipientId === "*") n.recipientId = DEMO_RECIPIENT[n.recipientRole] || n.recipientId;
+    });
+
+    // Demo notifications only in local demo mode; api mode lists come from the backend (bootstrap / commands)
+    const DEMO_NOTIFICATIONS = !(window.HS_CONFIG && (window.HS_CONFIG.isApi || window.HS_CONFIG.demoData === false));
+
     function loadStoredNotifications() {
         try {
-            const raw = localStorage.getItem(STORAGE_KEY);
+            const raw = window.HSStore ? window.HSStore.getItem(STORAGE_KEY) : localStorage.getItem(STORAGE_KEY);
             if (raw) {
                 const parsed = JSON.parse(raw);
                 if (Array.isArray(parsed) && parsed.length > 0) {
+                    // Add this portal's seed items once; address previously stored seed items to their demo account
+                    let updated = false;
+                    (DEMO_NOTIFICATIONS ? DEFAULT_SEED : []).forEach(seed => {
+                        const existing = parsed.find(item => item.id === seed.id);
+                        if (!existing) {
+                            parsed.unshift(seed);
+                            updated = true;
+                        } else if ((!existing.recipientId || existing.recipientId === "*") && seed.recipientId) {
+                            existing.recipientId = seed.recipientId;
+                            updated = true;
+                        }
+                    });
+                    if (updated) saveNotifications(parsed);
                     return parsed;
                 }
             }
@@ -111,13 +134,16 @@
             console.warn("Error loading notifications from storage:", e);
         }
         // Initialize with default seed
-        saveNotifications(DEFAULT_SEED);
-        return DEFAULT_SEED;
+        const initial = DEMO_NOTIFICATIONS ? DEFAULT_SEED : [];
+        saveNotifications(initial);
+        return initial;
     }
 
-    function saveNotifications(list) {
+    // cmd: backend command for user actions (mark read); seeding and local dispatch send none
+    function saveNotifications(list, cmd) {
         try {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+            if (window.HSShared && window.HSShared.writeNotifications) window.HSShared.writeNotifications(list, cmd);
+            else localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
         } catch (e) {
             console.warn("Error saving notifications to storage:", e);
         }
@@ -152,7 +178,7 @@
     const NotificationService = {
         getRoleNotifications(role = CURRENT_ROLE) {
             const all = loadStoredNotifications();
-            return all.filter((n) => n.recipientRole === role || n.recipientRole === "*");
+            return all.filter((n) => isVisible(n, role));
         },
 
         getUnreadCount(role = CURRENT_ROLE) {
@@ -174,7 +200,7 @@
             });
 
             if (changed) {
-                saveNotifications(all);
+                saveNotifications(all, { name: "notification.markRead", payload: { ids } });
                 broadcastEvent("NOTIFICATIONS_READ", { ids, role: CURRENT_ROLE });
             }
         },
@@ -185,14 +211,14 @@
             let changed = false;
 
             all.forEach((n) => {
-                if ((n.recipientRole === role || n.recipientRole === "*") && !n.readAt) {
+                if ((isVisible(n, role)) && !n.readAt) {
                     n.readAt = now;
                     changed = true;
                 }
             });
 
             if (changed) {
-                saveNotifications(all);
+                saveNotifications(all, { name: "notification.markRead", payload: { all: true, role } });
                 broadcastEvent("NOTIFICATIONS_ALL_READ", { role });
             }
         },
@@ -208,7 +234,7 @@
             const newNotif = {
                 id: event.id || `notif-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
                 recipientRole: event.recipientRole || CURRENT_ROLE,
-                recipientId: event.recipientId || "*",
+                recipientId: event.recipientId || (((event.recipientRole || CURRENT_ROLE) === CURRENT_ROLE && currentAccountId()) || "*"),
                 eventType: event.eventType || "system",
                 sourceEventId: event.sourceEventId || `evt-${Date.now()}`,
                 recordId: event.recordId || "",
@@ -227,7 +253,7 @@
             broadcastEvent("NEW_NOTIFICATION", { notification: newNotif });
 
             // If this portal is the target recipient, trigger UI pulse & toast
-            if (newNotif.recipientRole === CURRENT_ROLE || newNotif.recipientRole === "*") {
+            if (isVisible(newNotif, CURRENT_ROLE)) {
                 showLiveToast(newNotif);
                 updateBadge();
             }
@@ -803,7 +829,7 @@
             const { type, payload } = e.data || {};
             if (type === "NEW_NOTIFICATION") {
                 const notif = payload.notification;
-                if (notif && (notif.recipientRole === CURRENT_ROLE || notif.recipientRole === "*")) {
+                if (notif && isVisible(notif, CURRENT_ROLE)) {
                     showLiveToast(notif);
                     updateBadge();
                     renderNotificationList();

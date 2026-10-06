@@ -177,10 +177,34 @@
     // --------------------------------------------------------------------------
     // 4. USER PROFILE PREFERENCES PERSISTENCE
     // --------------------------------------------------------------------------
+    function merchantSession() {
+        return (typeof window !== 'undefined' && window.HSShared) ? window.HSShared.session.get('merchant') : null;
+    }
+
+    // Preferences are stored per merchant account (never shared between merchants)
+    function prefsKey() {
+        const session = merchantSession();
+        return session ? STORAGE_KEY_PREFS + ':' + session.accountId : STORAGE_KEY_PREFS;
+    }
+
+    // Identity always comes from the signed-in shared MER-### account, never from sample data
+    function applySessionIdentity(merchant) {
+        const session = merchantSession();
+        if (!merchant || !session) return merchant;
+        const record = window.HSShared.getAccount('merchant', session.accountId) || {};
+        merchant.merchantId = session.accountId;
+        merchant.companyName = record.name || session.name || merchant.companyName;
+        merchant.contactPerson = record.contact || merchant.contactPerson;
+        merchant.email = record.email || session.email || merchant.email;
+        merchant.phone = record.phone || merchant.phone;
+        return merchant;
+    }
+
     function applyUserPreferences(merchant) {
         if (!merchant) return merchant;
+        applySessionIdentity(merchant);
         try {
-            const raw = localStorage.getItem(STORAGE_KEY_PREFS);
+            const raw = localStorage.getItem(prefsKey());
             if (raw) {
                 const prefs = JSON.parse(raw);
                 if (prefs && typeof prefs === 'object') {
@@ -202,7 +226,17 @@
 
     function saveUserPreferences(prefs) {
         try {
-            localStorage.setItem(STORAGE_KEY_PREFS, JSON.stringify(prefs));
+            localStorage.setItem(prefsKey(), JSON.stringify(prefs));
+            const session = merchantSession();
+            if (session && prefs) {
+                window.HSShared.update(store => {
+                    const record = (store.merchants || []).find(m => m.id === session.accountId);
+                    if (!record) return { ok: false, error: 'Merchant account not found.' };
+                    if (prefs.companyName) record.name = prefs.companyName;
+                    if (prefs.contactPerson) record.contact = prefs.contactPerson;
+                    if (prefs.phone) record.phone = prefs.phone;
+                }, { name: 'profile.update', payload: { role: 'merchant', accountId: session.accountId, fields: { name: prefs.companyName, contact: prefs.contactPerson, phone: prefs.phone } } });
+            }
             if (cachedDataset && cachedDataset.merchant) {
                 applyUserPreferences(cachedDataset.merchant);
             }
@@ -261,6 +295,16 @@
             return cachedDataset;
         }
 
+        // api mode / demo data off: no sample projects, payouts, crews or activity — the merchant profile comes from
+        // the signed-in MER-### account (merchant projects/payouts need their APIs, see BACKEND_INTEGRATION.md)
+        if (window.HS_CONFIG && (window.HS_CONFIG.isApi || window.HS_CONFIG.demoData === false)) {
+            cachedDataset = getBaselineDataset();
+            ["companyName", "contactPerson", "email", "phone", "partnerTier", "commissionRate", "verificationStatus"]
+                .forEach(k => { if (k in cachedDataset.merchant) cachedDataset.merchant[k] = ""; });
+            applyUserPreferences(cachedDataset.merchant);
+            return cachedDataset;
+        }
+
         // Check if user uploaded a custom preview dataset
         try {
             const customRaw = localStorage.getItem(STORAGE_KEY_CUSTOM_DATA);
@@ -289,7 +333,7 @@
 
             const merchantObj = {
                 companyName: merchantInfoData.companyName || "SolarTech Manila",
-                merchantId: merchantInfoData.merchantId || "MCH-77412",
+                merchantId: merchantInfoData.merchantId || "",
                 accountType: merchantInfoData.accountType || "Merchant Partner",
                 verificationStatus: merchantInfoData.verificationStatus || "Accreditation on File",
                 contactPerson: merchantInfoData.contactPerson || "Marco Santos",
@@ -376,7 +420,7 @@
         return {
             merchant: {
                 companyName: "SolarTech Manila",
-                merchantId: "MCH-77412",
+                merchantId: "",
                 accountType: "Merchant Partner",
                 verificationStatus: "Accreditation on File",
                 contactPerson: "Marco Santos",
